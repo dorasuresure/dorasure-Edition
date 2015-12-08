@@ -2,11 +2,17 @@
 using System.Collections;
 
 public class Player : MonoBehaviour {
-	
+
+
 	public float speed = 4f; //歩くスピード
-	public float JumpPower = 200;//jumpryoku
+	public float JumpPower = 300;//jumpryoku
+	public float fireRate = 0.5f;
+	private float nextfire = 0.0f;
 	public LayerMask groundLayer;
 	public GameObject mainCamera;
+	public GameObject Slash;
+	private float jumpRate = 0.5f;
+	private float nextjump = 0.0f;
 	private Rigidbody2D rigidbody2D;
 	private Animator anim;
 	private bool isGrounded;
@@ -21,26 +27,22 @@ public class Player : MonoBehaviour {
 	{
 	isGrounded = Physics2D.Linecast (
 		transform.position + transform.up * 0.1f,
-		transform.position - transform.up * 0.5f,
+		transform.position - transform.up * 0.4f,
 		groundLayer);
 	//isGrounded=true且つJumpボタンを押した時Jumpメソッド実行
 
+		//Jump
 		if (isGrounded && Input.GetKey (KeyCode.Space)) {
+			//nextjump = Time.time + jumpRate;
 			anim.SetBool ("junp", true);
 			isGrounded = false;
 			anim.SetBool ("Dash", false);
 			rigidbody2D.AddForce (Vector2.up * JumpPower);
+			Debug.Log(JumpPower);
 		} 
 		if(isGrounded){
 			anim.SetBool ("junp", false);
 		}
-	/*
-		float velY = rigidbody2D.velocity.y;
-		bool isJumping = velY > 0.1f ? ture:false;
-		bool isFalling = velY < 0.1f ? ture:false;
-		anim.SetBool ("isJumping", isJumping);
-		anim.SetBool ("isFalling", isFalling);
-	*/
 		//左キー: -1、右キー: 1
 		float x = Input.GetAxisRaw ("Horizontal");
 		//左か右を入力したら
@@ -73,6 +75,11 @@ public class Player : MonoBehaviour {
 			rigidbody2D.velocity = new Vector2 (0, rigidbody2D.velocity.y);
 			//Dash→Wait
 			anim.SetBool ("Dash", false);
+		}
+		if (Input.GetKey (KeyCode.X)&&Time.time > nextfire) {
+			nextfire = Time.time + fireRate;
+			anim.SetTrigger("attack");
+			Instantiate(Slash, transform.position + new Vector3(0f,1.0f,0f), transform.rotation);
 		}
 	}
 }
