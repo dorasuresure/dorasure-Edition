@@ -5,6 +5,9 @@ public class Enemy1Script : MonoBehaviour {
 
 	Rigidbody2D rigidbody2D;
 	public int speed = -3;
+
+	public int attackPoint = 160;
+	public HPScript HPScript;
 	
 	void Start () {
 		rigidbody2D = GetComponent<Rigidbody2D>();
@@ -17,6 +20,12 @@ public class Enemy1Script : MonoBehaviour {
 	{
 		if (col.gameObject.tag == "Slash") {
 			Destroy(gameObject);
+		}
+	}
+	void OnCollisionEnter2D(Collision2D col)
+	{
+		if (col.gameObject.tag == "Player") {
+			HPScript.HPDown(attackPoint);
 		}
 	}
 }
